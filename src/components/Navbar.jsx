@@ -87,6 +87,13 @@ const Navbar = () => {
 					<span className='sm:hidden md:block font-bold'>04</span>
 					Play Ground
 				</NavLink>
+				<NavLink
+					className='relative ml-8 flex gap-[13px] sm:ml-0 sm:gap-0 md:gap-3'
+					activeClassName='active'
+					to={'/quiz'}>
+					<span className='sm:hidden md:block font-bold'>05</span>
+					Quiz Arena
+				</NavLink>
 			</nav>
 		</>
 	);

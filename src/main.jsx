@@ -8,6 +8,7 @@ import Crew from './components/Crew';
 import Destination from './components/Destination';
 import Technology from './components/Technology';
 import PlayGround from './components/PlayGround.jsx';
+import Quiz from './components/Quiz.jsx';
 const router = createBrowserRouter([
 	{
 		path: '/',
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
 	{
 		path: '/playground',
 		element: <PlayGround />,
+	},
+	{
+		path: '/quiz',
+		element: <Quiz />,
 	},
 ]);
 

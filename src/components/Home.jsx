@@ -7,8 +7,8 @@ function generateRandomNumber() {
 	return Math.floor(Math.random() * 3);
 }
 
-const Home = () => {
-	const exploreTo = ['/destination', '/crew', '/tech','/playground'];
+const Home = () => {     //0             //1     //2      //3
+	const exploreTo = ['/destination', '/crew', '/tech','/playground','/quiz'];
 	const [randomIndex, setRandomIndex] = useState(generateRandomNumber);
 	const handleClick = () => {
 		setRandomIndex(generateRandomNumber);

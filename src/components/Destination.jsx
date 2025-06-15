@@ -1,32 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import Navbar from "./Navbar";
 import DestinationNav from "./DestinationNav";
 import data from "../assets/data.json";
 
-// Import AR models
 const planetARModels = [
   new URL("../assets/models/sun.glb", import.meta.url).href,
   new URL("../assets/models/mercury.glb", import.meta.url).href,
   new URL("../assets/models/venus.glb", import.meta.url).href,
   new URL("../assets/models/earth.glb", import.meta.url).href,
-//   new URL("../assets/models/titan.glb", import.meta.url).href,
+  // Add more if needed
+];
+
+const planetUrls = [
+  "https://prod.spline.design/bm41d5mKG0VBeCHa/scene.splinecode", // Sun
+  "https://prod.spline.design/oNUcWhf4OXTgqHKu/scene.splinecode", // Mercury
+  "https://prod.spline.design/gHdKcSx6gAb5oFCM/scene.splinecode", // Venus
+  "https://prod.spline.design/IqBmzcCXJlAsz4lP/scene.splinecode", // Earth
+  "https://prod.spline.design/XsBbB5IYmQ7fl0kP/scene.splinecode", // Mars
+  "https://prod.spline.design/6GMRRNey4QR5c0df/scene.splinecode", // Jupiter
+  "https://prod.spline.design/pEBWDPFcuregYm2E/scene.splinecode", // Saturn
+  "https://prod.spline.design/4mI9cKGjSnWH94nb/scene.splinecode", // Uranus
+  "https://prod.spline.design/Q5Zxrj2YoIYboxYi/scene.splinecode", // Neptune
 ];
 
 const Destination = () => {
   const [activeDestination, setActiveDestination] = useState(0);
+  const [language, setLanguage] = useState("en");
+  const [audio] = useState(new Audio());
 
-  const planetUrls = [
-    "https://prod.spline.design/bm41d5mKG0VBeCHa/scene.splinecode", // Sun
-    "https://prod.spline.design/oNUcWhf4OXTgqHKu/scene.splinecode", // Mercury
-    "https://prod.spline.design/gHdKcSx6gAb5oFCM/scene.splinecode", // Venus
-    "https://prod.spline.design/IqBmzcCXJlAsz4lP/scene.splinecode", // Earth
-    "https://prod.spline.design/XsBbB5IYmQ7fl0kP/scene.splinecode", // Mars
-    "https://prod.spline.design/6GMRRNey4QR5c0df/scene.splinecode", // Jupiter
-    "https://prod.spline.design/pEBWDPFcuregYm2E/scene.splinecode", // Saturn
-    "https://prod.spline.design/4mI9cKGjSnWH94nb/scene.splinecode", // uranus
-    "https://prod.spline.design/Q5Zxrj2YoIYboxYi/scene.splinecode", //neptune
-  ];
+  useEffect(() => {
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, [audio]);
+
+const handlePlayAudio = () => {
+  const name = data.destinations[activeDestination].name.toLowerCase();
+  const src = `/assets/audio/${name}-${language}.mp3`;
+
+  console.log("Attempting to play:", src);
+
+  audio.pause();
+  audio.src = src;
+  audio.load(); // ✅ Ensures the new file is loaded
+  audio.play().then(() => {
+    console.log("Audio is playing");
+  }).catch((err) => {
+    console.error("Audio playback failed:", err);
+  });
+};
+
+
 
   return (
     <div className="bg-destinationMobile sm:bg-destinationTablet md:bg-destinationDesktop bg-cover bg-center flex flex-col w-full text-white min-h-screen">
@@ -65,6 +91,58 @@ const Destination = () => {
                   {data.destinations[activeDestination].description}
                 </p>
               </div>
+
+              {/* ✅ Language selector */}
+              <div className="flex justify-center md:justify-start gap-2 mt-6">
+                <button
+                  onClick={() => setLanguage("en")}
+                  className={`px-3 py-1 rounded ${
+                    language === "en" ? "bg-white text-black" : "bg-gray-700"
+                  }`}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => setLanguage("hi")}
+                  className={`px-3 py-1 rounded ${
+                    language === "hi" ? "bg-white text-black" : "bg-gray-700"
+                  }`}
+                >
+                  हिंदी
+                </button>
+                <button
+                  onClick={() => setLanguage("bn")}
+                  className={`px-3 py-1 rounded ${
+                    language === "bn" ? "bg-white text-black" : "bg-gray-700"
+                  }`}
+                >
+                  বাংলা
+                </button>
+              </div>
+
+              {/* ✅ Play Audio Button */}
+              <div className="text-center mt-4">
+                <button
+                  onClick={handlePlayAudio}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition"
+                >
+                  🔊 About the Planet
+                </button>
+              </div>
+
+              {/* ✅ AR Button */}
+              <div className="text-center mt-6">
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  onClick={() => {
+                    const arUrl = planetARModels[activeDestination];
+                    window.location.href = `intent://arvr.google.com/scene-viewer/1.0?file=${arUrl}#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;end;`;
+                  }}
+                >
+                  View in AR
+                </button>
+              </div>
+
               <div className="flex flex-col sm:flex-row justify-evenly py-7 md:pb-0 md:justify-start md:gap-12">
                 <div className="my-8">
                   <h4 className="font-barlow text-secondary tracking-[2.36px] text-sm mb-3">
@@ -82,18 +160,6 @@ const Destination = () => {
                     {data.destinations[activeDestination].travel}
                   </span>
                 </div>
-              </div>
-              <div className="text-center mt-6">
-              <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  onClick={() => {
-                    const arUrl = planetARModels[activeDestination];
-                    window.location.href = `intent://arvr.google.com/scene-viewer/1.0?file=${arUrl}#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;end;`;
-                  }}
-                >
-                  View in AR
-                </button>
-
               </div>
             </div>
           </div>
